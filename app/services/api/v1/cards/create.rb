@@ -4,12 +4,23 @@ class Api::V1::Cards::Create < AppService
   end
 
   def call
-    account.cards.create!(number: number, expires_date: expires_date, cvv: cvv)
+    card = account.cards.create!(
+      name: name,
+      number: number,
+      expires_date: expires_date,
+      cvv: cvv
+    )
+
+    card
   end
 
   private
 
   attr_reader :account
+
+  def name
+    "Card ##{account.cards.count + 1}"
+  end
 
   def number
     (0..3).map { rand(1000..9999) }.join(" ")

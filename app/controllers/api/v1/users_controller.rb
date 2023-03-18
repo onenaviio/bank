@@ -1,0 +1,13 @@
+class Api::V1::UsersController < ApplicationController
+  def create
+    user = Api::V1::Users::Create.call(user_params)
+
+    render_json(user)
+  end
+
+  private
+
+  def user_params
+    params.permit(:first_name, :last_name, :patronymic, :birthday, :phone, :email, :password)
+  end
+end

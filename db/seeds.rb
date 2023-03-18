@@ -1,8 +1,8 @@
 def create_account_and_card(user)
-  account = user.accounts.find_by(currency: :rub) || Accounts::Create.call(user: user, currency: :rub)
+  account = user.accounts.find_by(currency: :rub) || Api::V1::Accounts::Create.call(user: user, currency: :rub)
   return if account.cards.exists?
 
-  Cards::Create.call(account: account)
+  Api::V1::Cards::Create.call(account: account)
 end
 
 bank_user = User.find_or_create_by!(
@@ -18,7 +18,7 @@ bank_user = User.find_or_create_by!(
 Account.currencies.each_key do |currency|
   next if bank_user.accounts.where(currency: currency).exists?
 
-  Accounts::Create.call(user: bank_user, currency: currency)
+  Api::V1::Accounts::Create.call(user: bank_user, currency: currency)
 end
 
 user1 = User.find_or_create_by!(

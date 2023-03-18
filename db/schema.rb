@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 2023_03_18_034427) do
 
   create_table "cards", force: :cascade do |t|
     t.integer "account_id", null: false
+    t.string "name", null: false
     t.string "number", null: false
     t.date "expires_date", null: false
     t.string "cvv", null: false

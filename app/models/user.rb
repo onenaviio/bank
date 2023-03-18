@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_many :accounts, dependent: :nullify
+  has_many :cards, through: :accounts
 
   validates :first_name, :last_name, :patronymic, :phone, :email, :password, presence: true
   validates :email, :phone, uniqueness: true
