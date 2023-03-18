@@ -1,4 +1,4 @@
-class Cards::Create < AppService
+class Api::V1::Cards::Create < AppService
   def initialize(account:)
     @account = account
   end

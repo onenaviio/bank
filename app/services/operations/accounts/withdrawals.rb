@@ -1,8 +1,8 @@
-class Operations::Cards::Withdrawals < Operations::Cards::Base
+class Operations::Accounts::Withdrawals < Operations::Accounts::Base
   def call
     balance = account.balance - payload
     raise Operations::Errors::NegativeBalance if balance.negative?
 
-    account.update!(balance: balance)
+    account.update!(balance: round(balance))
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_17_191902) do
+ActiveRecord::Schema.define(version: 2023_03_18_034427) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -32,6 +32,18 @@ ActiveRecord::Schema.define(version: 2023_03_17_191902) do
     t.index ["account_id"], name: "index_cards_on_account_id"
   end
 
+  create_table "history_operations", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.integer "card_id"
+    t.string "title", null: false
+    t.float "payload", null: false
+    t.datetime "processed_at", null: false
+    t.integer "operation_type", null: false
+    t.json "options", default: {}
+    t.index ["account_id"], name: "index_history_operations_on_account_id"
+    t.index ["card_id"], name: "index_history_operations_on_card_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
@@ -46,4 +58,6 @@ ActiveRecord::Schema.define(version: 2023_03_17_191902) do
 
   add_foreign_key "accounts", "users", on_delete: :cascade
   add_foreign_key "cards", "accounts"
+  add_foreign_key "history_operations", "accounts", on_delete: :cascade
+  add_foreign_key "history_operations", "cards"
 end

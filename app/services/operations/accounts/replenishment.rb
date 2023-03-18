@@ -2,6 +2,6 @@ class Operations::Accounts::Replenishment < Operations::Accounts::Base
   def call
     balance = account.balance + payload
 
-    account.update!(balance: balance)    
+    account.update!(balance: round(balance))
   end
 end

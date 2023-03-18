@@ -1,4 +1,4 @@
-class Users::Create < AppService
+class Api::V1::Users::Create < AppService
   def initialize(kwargs = {})
     @first_name = kwargs[:first_name]
     @last_name  = kwargs[:last_name]

@@ -1,4 +1,4 @@
-class Accounts::Create < AppService
+class Api::V1::Accounts::Create < AppService
   def initialize(user:, currency:)
     @user     = user
     @currency = currency

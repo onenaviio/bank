@@ -1,6 +1,7 @@
 module Operations::Errors
   extend ActiveSupport::Concern
 
+  # TODO: humanize messages
   class Error < StandardError; end
 
   class NegativeBalance < Error

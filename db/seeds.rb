@@ -1,7 +1,46 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+def create_account_and_card(user)
+  account = user.accounts.find_by(currency: :rub) || Accounts::Create.call(user: user, currency: :rub)
+  return if account.cards.exists?
+
+  Cards::Create.call(account: account)
+end
+
+bank_user = User.find_or_create_by!(
+  first_name: "K.O. Bank",
+  last_name: "*",
+  patronymic: "*",
+  phone: "*",
+  email: "bank@bank.ru",
+  password: "123123",
+  birthday: "2023-03-17"
+)
+
+Account.currencies.each_key do |currency|
+  next if bank_user.accounts.where(currency: currency).exists?
+
+  Accounts::Create.call(user: bank_user, currency: currency)
+end
+
+user1 = User.find_or_create_by!(
+  first_name: "Олег",
+  last_name: "Кроль",
+  patronymic: "Олегович",
+  phone: "89236824420",
+  email: "krol-oleg@bk.ru",
+  password: "123123",
+  birthday: "1996-11-09"
+)
+
+create_account_and_card(user1)
+
+user2 = User.find_or_create_by!(
+  first_name: "Валерия",
+  last_name: "Кроль",
+  patronymic: "Витальевна",
+  phone: "89087935901",
+  email: "lera-oleg@bk.ru",
+  password: "123123",
+  birthday: "1997-01-14"
+)
+
+create_account_and_card(user2)

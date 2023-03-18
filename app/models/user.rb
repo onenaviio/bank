@@ -6,7 +6,7 @@ class User < ApplicationRecord
 
   class << self
     def bank
-      find_by(first_name: "BANK", last_name: "*", patronymic: "*")
+      find_by(first_name: "K.O. Bank", last_name: "*", patronymic: "*")
     end
   end
 
