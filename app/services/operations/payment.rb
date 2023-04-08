@@ -9,8 +9,8 @@ class Operations::Payment < AppService
   def call
     ActiveRecord::Base.transaction do
       decrease_account_balance!
-      pay_options = perform_payment!
-      history_operation_create!(pay_options)
+      payment_options = perform_payment!
+      history_operation_create!(payment_options)
     end
   end
 

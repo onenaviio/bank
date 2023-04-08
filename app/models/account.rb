@@ -2,6 +2,7 @@ class Account < ApplicationRecord
   enum currency: %i[rub usd eur], _prefix: true
 
   belongs_to :user
+  belongs_to :service_rate
 
   has_many :cards, dependent: :destroy
   has_many :history_operations, dependent: :destroy

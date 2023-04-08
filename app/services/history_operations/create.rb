@@ -9,16 +9,17 @@ class HistoryOperations::Create < AppService
   end
 
   def call
-    history_operation = account.history_operations.create!(
-      card: card,
-      title: title,
-      payload: payload,
-      operation_type: operation_type,
-      processed_at: DateTime.current,
-      options: options
-    )
+    # TODO: check sender_id -> user_id?
+    # history_operation = account.history_operations.create!(
+    #   card: card,
+    #   title: title,
+    #   payload: payload,
+    #   operation_type: operation_type,
+    #   processed_at: Time.zone.now,
+    #   options: options.except(:sender_id)
+    # )
 
-    history_operation
+    # history_operation
   end
 
   private

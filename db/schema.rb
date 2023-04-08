@@ -10,7 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_18_034427) do
+ActiveRecord::Schema.define(version: 2023_04_08_033217) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -19,11 +22,13 @@ ActiveRecord::Schema.define(version: 2023_03_18_034427) do
     t.float "balance", default: 0.0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "service_rate_id", null: false
+    t.index ["service_rate_id"], name: "index_accounts_on_service_rate_id"
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
   create_table "cards", force: :cascade do |t|
-    t.integer "account_id", null: false
+    t.bigint "account_id", null: false
     t.string "name", null: false
     t.string "number", null: false
     t.date "expires_date", null: false
@@ -34,15 +39,26 @@ ActiveRecord::Schema.define(version: 2023_03_18_034427) do
   end
 
   create_table "history_operations", force: :cascade do |t|
-    t.integer "account_id", null: false
-    t.integer "card_id"
+    t.bigint "account_id", null: false
+    t.bigint "card_id"
+    t.bigint "user_id"
     t.string "title", null: false
     t.float "payload", null: false
     t.datetime "processed_at", null: false
     t.integer "operation_type", null: false
-    t.json "options", default: {}
+    t.jsonb "extra_data", default: {}
     t.index ["account_id"], name: "index_history_operations_on_account_id"
     t.index ["card_id"], name: "index_history_operations_on_card_id"
+    t.index ["user_id"], name: "index_history_operations_on_user_id"
+  end
+
+  create_table "service_rates", force: :cascade do |t|
+    t.string "title", null: false
+    t.float "service_per_month", default: 0.0, null: false
+    t.string "c2c_commission_type", null: false
+    t.float "c2c_commission_value", default: 0.0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -57,8 +73,10 @@ ActiveRecord::Schema.define(version: 2023_03_18_034427) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "accounts", "service_rates"
   add_foreign_key "accounts", "users", on_delete: :cascade
   add_foreign_key "cards", "accounts"
   add_foreign_key "history_operations", "accounts", on_delete: :cascade
   add_foreign_key "history_operations", "cards"
+  add_foreign_key "history_operations", "users"
 end

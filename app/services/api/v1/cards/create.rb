@@ -23,7 +23,7 @@ class Api::V1::Cards::Create < AppService
   end
 
   def number
-    (0..3).map { rand(1000..9999) }.join(" ")
+    (0..3).map { rand(1000..9999) }.join("")
   end
 
   def expires_date

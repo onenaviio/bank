@@ -8,9 +8,9 @@ class Api::V1::AccountsController < ApplicationController
   end
 
   def create
-    account = Api::V1::Accounts::Create.call(user: current_user, currency: params[:currency])
+    Api::V1::Accounts::Create.call(user: current_user, currency: params[:currency])
 
-    render_json(account)
+    render_json(accounts)
   end
 
   private

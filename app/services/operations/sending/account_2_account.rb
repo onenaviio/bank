@@ -1,5 +1,3 @@
-# payloads = Operations::Commissions::Calculator.call(payload: 1500, commission: 0.1)
-# Operations::Sending::Account2Account.call(account_from: acc1, account_to: acc2, payloads: payloads)
 class Operations::Sending::Account2Account < AppService
   include HistoryOperationsConstants
   include Operations::Errors
@@ -39,19 +37,27 @@ class Operations::Sending::Account2Account < AppService
 
   def increase_account_to_balance!
     Operations::Accounts::Replenishment.call(account: account_to, payload: payload)
-    history_operations_create!(account_to, payload: payload, title: RECEIVE_MONEY_TITLE)
+    history_operations_create!(
+      account_to,
+      payload: payload,
+      title: RECEIVE_MONEY_TITLE,
+      options: {
+        sender_id: account_from.user_id
+      }
+    )
   end
 
   def increase_bank_account_balance!
     Operations::Bank::Receive.call(payload: commission_payload, currency: account_from.currency)
   end
 
-  def history_operations_create!(account, payload:, title:)
+  def history_operations_create!(account, payload:, title:, options: {})
     HistoryOperations::Create.call(
       account: account,
       payload: payload,
       title: title,
-      operation_type: :transactions
+      operation_type: :transactions,
+      options: options
     )
   end
 
