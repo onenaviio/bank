@@ -5,9 +5,7 @@ class Api::V1::Accounts::Create < AppService
   end
 
   def call
-    account = user.accounts.create!(number: number, currency: currency, service_rate: service_rate)
-
-    account
+    user.accounts.create!(number: number, currency: currency, service_rate: service_rate)
   end
 
   private
@@ -15,7 +13,7 @@ class Api::V1::Accounts::Create < AppService
   attr_reader :user, :currency
 
   def number
-    (0..6).map { rand(10000..99999) }.join("")
+    (0..6).map { rand(10_000..99_999) }.join
   end
 
   def service_rate

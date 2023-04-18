@@ -7,24 +7,24 @@ end
 
 # === SERVICE RATES ===
 ServiceRate.find_or_create_by!(
-   title: "Базовый",
-   service_per_month: 20,
-   c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
-   c2c_commission_value: ApplicationConstants::CARD2CARD_COMMISSION_PERCENT
+  title: "Базовый",
+  service_per_month: 20,
+  c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
+  c2c_commission_value: ApplicationConstants::CARD2CARD_COMMISSION_PERCENT
 )
 
 ServiceRate.find_or_create_by!(
-   title: "Начальный",
-   service_per_month: 450,
-   c2c_commission_type: :value,
-   c2c_commission_value: 150
+  title: "Начальный",
+  service_per_month: 450,
+  c2c_commission_type: :value,
+  c2c_commission_value: 150
 )
 
 ServiceRate.find_or_create_by!(
-   title: "Продвинутый",
-   service_per_month: 1500,
-   c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
-   c2c_commission_value: 0.1
+  title: "Продвинутый",
+  service_per_month: 1500,
+  c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
+  c2c_commission_value: 0.1
 )
 # =====================
 
@@ -45,8 +45,6 @@ Account.currencies.each_key do |currency|
   Api::V1::Accounts::Create.call(user: bank_user, currency: currency)
 end
 # ============
-
-
 
 # === USERS ===
 user1 = User.find_or_create_by!(

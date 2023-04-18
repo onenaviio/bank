@@ -6,7 +6,7 @@ class Card < ApplicationRecord
 
   validates :number, uniqueness: true
   validates :number, :expires_date, :cvv, presence: true
-  
+
   def commission
     Cards::Commission.call(self)
   end

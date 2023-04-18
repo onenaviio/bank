@@ -32,9 +32,9 @@ class Operations::Commissions::Calculator < AppService
   def payload_with_commission
     case commission[:type]
     when :percent
-      payload * (1.0 + commission[:value] / 100)
+      payload * (1.0 + (commission[:value] / 100))
     when :value
-      payload + commission[:value] 
+      payload + commission[:value]
     end
   end
 end

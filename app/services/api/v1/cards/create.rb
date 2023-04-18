@@ -4,14 +4,12 @@ class Api::V1::Cards::Create < AppService
   end
 
   def call
-    card = account.cards.create!(
+    account.cards.create!(
       name: name,
       number: number,
       expires_date: expires_date,
       cvv: cvv
     )
-
-    card
   end
 
   private
@@ -23,7 +21,7 @@ class Api::V1::Cards::Create < AppService
   end
 
   def number
-    (0..3).map { rand(1000..9999) }.join("")
+    (0..3).map { rand(1000..9999) }.join
   end
 
   def expires_date

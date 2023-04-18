@@ -22,4 +22,3 @@ class Api::V1::Operations::Cards::SendMoney < AppService
     Operations::Commissions::Calculator.call(payload: payload, commission: commission)
   end
 end
-
