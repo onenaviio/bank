@@ -2,14 +2,9 @@ class Operations::Sending::Account2Account < AppService
   include HistoryOperationsConstants
   include Operations::Errors
 
-  def initialize(account_from:, account_to:, payloads:)
-    @account_from = account_from
-    @account_to   = account_to
-
-    @payload                 = payloads[:payload]
-    @commission_payload      = payloads[:commission_payload]
-    @payload_with_commission = payloads[:payload_with_commission]
-  end
+  option :account_from, Types::Account
+  option :account_to, Types::Account
+  option :payloads, Types::Commissions::Payload
 
   def call
     validate_accounts_currency!
@@ -21,8 +16,6 @@ class Operations::Sending::Account2Account < AppService
   end
 
   private
-
-  attr_reader :account_from, :account_to, :payload, :commission_payload, :payload_with_commission
 
   def validate_accounts_currency!
     return if account_from.currency == account_to.currency
@@ -37,28 +30,40 @@ class Operations::Sending::Account2Account < AppService
 
   def increase_account_to_balance!
     Operations::Accounts::Replenishment.call(account: account_to, payload: payload)
-    history_operations_create!(
-      account_to,
-      payload: payload,
-      title: RECEIVE_MONEY_TITLE,
-      options: {
-        sender_id: account_from.user_id
-      }
-    )
+    history_operations_create!(account_to, payload: payload, title: RECEIVE_MONEY_TITLE)
   end
 
   def increase_bank_account_balance!
-    Operations::Bank::Receive.call(payload: commission_payload, currency: account_from.currency)
+    options = { payload: commission_payload, currency: account_from.currency }
+
+    Operations::Bank::Receive.call(options) do |bank_account:, payload:|
+      history_operations_create!(bank_account, payload: payload, title: TRANSACTION_COMMISSION)
+    end
   end
 
-  def history_operations_create!(account, payload:, title:, options: {})
+  def history_operations_create!(account, payload:, title:)
     HistoryOperations::Create.call(
       account: account,
       payload: payload,
       title: title,
       operation_type: :transactions,
-      options: options
+      extra_data: {
+        receiver_id: account_to.user_id,
+        sender_id: account_from.user_id
+      }
     )
+  end
+
+  def payload
+    payloads.payload
+  end
+
+  def commission_payload
+    payloads.commission_payload
+  end
+
+  def payload_with_commission
+    payloads.payload_with_commission
   end
 
   def with_commission?

@@ -1,11 +1,8 @@
 class Api::V1::Operations::Cards::Withdrawals < AppService
   include HistoryOperationsConstants
 
-  def initialize(card:, payload:)
-    @card    = card
-    @account = card.account
-    @payload = payload.abs.to_f
-  end
+  with_payload_option
+  option :card, Types::Card
 
   def call
     ActiveRecord::Base.transaction do
@@ -24,5 +21,7 @@ class Api::V1::Operations::Cards::Withdrawals < AppService
 
   private
 
-  attr_reader :card, :account, :payload
+  def account
+    @account ||= card.account
+  end
 end

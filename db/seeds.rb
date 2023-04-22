@@ -1,5 +1,6 @@
 def create_account_and_card(user)
-  account = user.accounts.find_by(currency: :rub) || Api::V1::Accounts::Create.call(user: user, currency: :rub)
+  account = user.accounts.find_by(currency: :rub) || Api::V1::Accounts::Create.call(user: user, currency: "rub")
+  account.update(balance: 10000)
   return if account.cards.exists?
 
   Api::V1::Cards::Create.call(account: account)

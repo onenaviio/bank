@@ -8,6 +8,9 @@ class Card < ApplicationRecord
   validates :number, :expires_date, :cvv, presence: true
 
   def commission
-    Cards::Commission.call(self)
+    Types::Cards::Commission[{
+      value: service_rate.c2c_commission_value.to_f,
+      type: service_rate.c2c_commission_type.to_sym
+    }]
   end
 end

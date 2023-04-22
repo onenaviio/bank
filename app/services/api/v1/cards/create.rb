@@ -1,7 +1,5 @@
 class Api::V1::Cards::Create < AppService
-  def initialize(account:)
-    @account = account
-  end
+  option :account, Types::Account
 
   def call
     account.cards.create!(
@@ -13,8 +11,6 @@ class Api::V1::Cards::Create < AppService
   end
 
   private
-
-  attr_reader :account
 
   def name
     "Card ##{account.cards.count + 1}"

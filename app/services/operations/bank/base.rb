@@ -1,14 +1,11 @@
+# :nocov:
 class Operations::Bank::Base < AppService
   include Operations::Errors
 
-  def initialize(payload:, currency:)
-    @payload  = payload.to_f
-    @currency = currency
-  end
+  with_payload_option
+  option :currency, Types::Currency
 
   private
-
-  attr_reader :payload, :currency
 
   def bank_account
     @bank_account ||= begin

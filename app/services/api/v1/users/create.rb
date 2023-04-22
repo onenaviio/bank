@@ -1,7 +1,5 @@
 class Api::V1::Users::Create < AppService
-  def initialize(user_params = {})
-    @user_params = user_params
-  end
+  param :user_params, default: -> { {} }
 
   def call
     user = User.create!(user_params)
@@ -10,8 +8,6 @@ class Api::V1::Users::Create < AppService
   end
 
   private
-
-  attr_reader :user_params
 
   def send_email!(user); end
 end

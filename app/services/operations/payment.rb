@@ -1,10 +1,8 @@
 class Operations::Payment < AppService
   include HistoryOperationsConstants
 
-  def initialize(account:, payload:)
-    @account = account
-    @payload = payload.abs
-  end
+  with_payload_option
+  option :account, Types::Account
 
   def call
     ActiveRecord::Base.transaction do
@@ -33,6 +31,4 @@ class Operations::Payment < AppService
       options: options
     )
   end
-
-  attr_reader :account, :payload
 end

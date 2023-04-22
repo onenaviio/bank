@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
   create_table "history_operations", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "card_id"
-    t.bigint "user_id"
     t.string "title", null: false
     t.float "payload", null: false
     t.datetime "processed_at", null: false
@@ -49,7 +48,6 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
     t.jsonb "extra_data", default: {}
     t.index ["account_id"], name: "index_history_operations_on_account_id"
     t.index ["card_id"], name: "index_history_operations_on_card_id"
-    t.index ["user_id"], name: "index_history_operations_on_user_id"
   end
 
   create_table "service_rates", force: :cascade do |t|
@@ -78,5 +76,4 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
   add_foreign_key "cards", "accounts"
   add_foreign_key "history_operations", "accounts", on_delete: :cascade
   add_foreign_key "history_operations", "cards"
-  add_foreign_key "history_operations", "users"
 end
