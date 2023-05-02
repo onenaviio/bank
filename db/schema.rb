@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_08_033217) do
+ActiveRecord::Schema.define(version: 2023_05_01_115234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,16 +38,11 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
     t.index ["account_id"], name: "index_cards_on_account_id"
   end
 
-  create_table "history_operations", force: :cascade do |t|
-    t.bigint "account_id", null: false
-    t.bigint "card_id"
-    t.string "title", null: false
-    t.float "payload", null: false
-    t.datetime "processed_at", null: false
-    t.integer "operation_type", null: false
-    t.jsonb "extra_data", default: {}
-    t.index ["account_id"], name: "index_history_operations_on_account_id"
-    t.index ["card_id"], name: "index_history_operations_on_card_id"
+  create_table "issues", force: :cascade do |t|
+    t.string "message", null: false
+    t.datetime "occured_at", null: false
+    t.jsonb "context", default: {}
+    t.jsonb "backtrace", default: []
   end
 
   create_table "service_rates", force: :cascade do |t|
@@ -57,6 +52,29 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
     t.float "c2c_commission_value", default: 0.0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.bigint "account_from_id", null: false
+    t.bigint "account_to_id"
+    t.bigint "card_from_id"
+    t.bigint "card_to_id"
+    t.string "external_account_to_id"
+    t.string "external_account_to_type"
+    t.string "operation_type", null: false
+    t.float "payload", null: false
+    t.float "commission_payload", default: 0.0, null: false
+    t.string "comment"
+    t.datetime "started_at", null: false
+    t.datetime "processed_at"
+    t.datetime "failed_at"
+    t.string "status", null: false
+    t.boolean "suspicious", default: false, null: false
+    t.jsonb "extra_data", default: {}
+    t.index ["account_from_id"], name: "index_transactions_on_account_from_id"
+    t.index ["account_to_id"], name: "index_transactions_on_account_to_id"
+    t.index ["card_from_id"], name: "index_transactions_on_card_from_id"
+    t.index ["card_to_id"], name: "index_transactions_on_card_to_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -74,6 +92,8 @@ ActiveRecord::Schema.define(version: 2023_04_08_033217) do
   add_foreign_key "accounts", "service_rates"
   add_foreign_key "accounts", "users", on_delete: :cascade
   add_foreign_key "cards", "accounts"
-  add_foreign_key "history_operations", "accounts", on_delete: :cascade
-  add_foreign_key "history_operations", "cards"
+  add_foreign_key "transactions", "accounts", column: "account_from_id"
+  add_foreign_key "transactions", "accounts", column: "account_to_id"
+  add_foreign_key "transactions", "cards", column: "card_from_id"
+  add_foreign_key "transactions", "cards", column: "card_to_id"
 end

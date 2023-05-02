@@ -1,72 +1,73 @@
-class Operations::Sending::Account2Account < AppService
-  include HistoryOperationsConstants
-  include Operations::Errors
+# class Operations::Sending::Account2Account < AppService
+#   # include HistoryOperationsConstants
+#   include Operations::Errors
 
-  option :account_from, Types::Account
-  option :account_to, Types::Account
-  option :payloads, Types::Commissions::Payload
+#   option :account_from, Types::Account
+#   option :account_to, Types::Account
+#   option :payloads, Types::Commissions::Payload
 
-  def call
-    validate_accounts_currency!
-    ActiveRecord::Base.transaction do
-      decrease_account_from_balance!
-      increase_account_to_balance!
-      increase_bank_account_balance! if with_commission?
-    end
-  end
+#   option :card_form, Types::Card, optional: true  
+#   option :card_to, Types::Card, optional: true  
 
-  private
+#   def call
+#     validate_accounts_currency!
+#     ActiveRecord::Base.transaction do
+#       decrease_account_from_balance!
+#       increase_account_to_balance!
+#       increase_bank_account_balance! if with_commission?
+#       create_transaction!
+#     end
+#   end
 
-  def validate_accounts_currency!
-    return if account_from.currency == account_to.currency
+#   private
 
-    raise Operations::Errors::WrongCurrency
-  end
+#   def validate_accounts_currency!
+#     return if account_from.currency == account_to.currency
 
-  def decrease_account_from_balance!
-    Operations::Accounts::Withdrawals.call(account: account_from, payload: payload_with_commission)
-    history_operations_create!(account_from, payload: -payload_with_commission, title: SEND_MONEY_TITLE)
-  end
+#     raise Operations::Errors::WrongCurrency
+#   end
 
-  def increase_account_to_balance!
-    Operations::Accounts::Replenishment.call(account: account_to, payload: payload)
-    history_operations_create!(account_to, payload: payload, title: RECEIVE_MONEY_TITLE)
-  end
+#   def decrease_account_from_balance!
+#     Operations::Accounts::Withdrawals.call(account: account_from, payload: payload_with_commission)
+#   end
 
-  def increase_bank_account_balance!
-    options = { payload: commission_payload, currency: account_from.currency }
+#   def increase_account_to_balance!
+#     Operations::Accounts::Replenishment.call(account: account_to, payload: payload)
+#   end
 
-    Operations::Bank::Receive.call(options) do |bank_account:, payload:|
-      history_operations_create!(bank_account, payload: payload, title: TRANSACTION_COMMISSION)
-    end
-  end
+#   def increase_bank_account_balance!
+#     options = { payload: commission_payload, currency: account_from.currency }
 
-  def history_operations_create!(account, payload:, title:)
-    HistoryOperations::Create.call(
-      account: account,
-      payload: payload,
-      title: title,
-      operation_type: :transactions,
-      extra_data: {
-        receiver_id: account_to.user_id,
-        sender_id: account_from.user_id
-      }
-    )
-  end
+#     Operations::Bank::Receive.call(options)
+#   end
 
-  def payload
-    payloads.payload
-  end
+#   def create_transaction!
+#     Transaction.create!(
+#       account_from: account_from,
+#       account_to: account_to,
+#       card_from: card_from,
+#       card_to: card_to,
+#       status: :unconfirmed,
+#       operation_type: :transfer,
+#       payload: payload,
+#       commission: commission_payload,
+#       processed_at: DateTime.now.in_time_zone
+#     )
+#   end
 
-  def commission_payload
-    payloads.commission_payload
-  end
+#   def payload
+#     payloads.payload
+#   end
 
-  def payload_with_commission
-    payloads.payload_with_commission
-  end
+#   def commission_payload
+#     payloads.commission_payload
+#   end
 
-  def with_commission?
-    payload != payload_with_commission
-  end
-end
+#   def payload_with_commission
+#     payloads.payload_with_commission
+#   end
+
+#   def with_commission?
+#     payload != payload_with_commission
+#   end
+# end

@@ -1,0 +1,9 @@
+:verbose: false
+:concurrency: 1
+:queues:
+  - default
+  - transactions
+staging:
+  :concurrency: 20
+production:
+  :concurrency: 20

@@ -5,8 +5,7 @@ class Operations::Commissions::Calculator < AppService
   def call
     Types::Commissions::Payload[{
       payload: round(payload),
-      commission_payload: round(payload_with_commission - payload),
-      payload_with_commission: round(payload_with_commission)
+      commission_payload: round(payload_with_commission - payload)
     }]
   end
 
