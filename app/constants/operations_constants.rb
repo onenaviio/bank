@@ -7,4 +7,6 @@ module OperationsConstants
   WITHDRAWALS_TITLE = "Снятие средств".freeze
 
   TRANSACTION_COMMISSION = "Комисссия за счет перевода средств".freeze
+
+  MONTH_RATE_PAYMENT = "Ежемесячная плата за обслуживание".freeze
 end

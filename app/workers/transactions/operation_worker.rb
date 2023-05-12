@@ -13,6 +13,6 @@ class Transactions::OperationWorker < ApplicationWorker
   private
 
   def handling_service(transaction)
-    "Transactions::Handler::#{transaction.operation_type.capitalize}".constantize
+    "Transactions::Handler::#{transaction.operation_type.camelize}".constantize
   end
 end

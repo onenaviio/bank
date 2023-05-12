@@ -1,6 +1,6 @@
 class Api::V1::CardsController < ApplicationController
   def index
-    render_collections(cards)
+    render_collection(cards)
   end
 
   def show

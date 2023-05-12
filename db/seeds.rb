@@ -1,32 +1,71 @@
 def create_account_and_card(user)
   account = user.accounts.find_by(currency: :rub) || Api::V1::Accounts::Create.call(user: user, currency: "rub")
-  account.update(balance: 10000)
+  account.update(balance: 0)
   return if account.cards.exists?
 
   Api::V1::Cards::Create.call(account: account)
 end
 
 # === SERVICE RATES ===
-ServiceRate.find_or_create_by!(
+bank_service_rate = ServiceRate.find_or_create_by!(
+  title: "Банк",
+  service_per_month: 0,
+  c2c_commission_type: "value",
+  c2c_commission_value: 0,
+  withdrawals_commission_type: "value",
+  withdrawals_commission_value: 0
+)
+bank_service_rate.build_month_limit(
+  withdrawals_to_commission: -1,
+  c2c_external_to_commission: -1,
+  c2c_internal_to_commission: -1,
+  sbp_to_commission: -1
+).save
+
+base = ServiceRate.find_or_create_by!(
   title: "Базовый",
   service_per_month: 20,
   c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
-  c2c_commission_value: ApplicationConstants::CARD2CARD_COMMISSION_PERCENT
+  c2c_commission_value: ApplicationConstants::CARD2CARD_COMMISSION_PERCENT,
+  withdrawals_commission_type: "value",
+  withdrawals_commission_value: 200
 )
+base.build_month_limit(
+  withdrawals_to_commission: 100_000,
+  c2c_external_to_commission: 150_000,
+  c2c_internal_to_commission: 1_000_000,
+  sbp_to_commission: 500_000
+).save
 
-ServiceRate.find_or_create_by!(
+start = ServiceRate.find_or_create_by!(
   title: "Начальный",
   service_per_month: 450,
   c2c_commission_type: :value,
-  c2c_commission_value: 150
+  c2c_commission_value: 150,
+  withdrawals_commission_type: "percent",
+  withdrawals_commission_value: 2.5
 )
+start.build_month_limit(
+  withdrawals_to_commission: 200_000,
+  c2c_external_to_commission: 250_000,
+  c2c_internal_to_commission: 2_000_000,
+  sbp_to_commission: 1_000_000
+).save
 
-ServiceRate.find_or_create_by!(
+advanced = ServiceRate.find_or_create_by!(
   title: "Продвинутый",
   service_per_month: 1500,
   c2c_commission_type: ApplicationConstants::DEFAULT_COMMISSION_TYPE,
-  c2c_commission_value: 0.1
+  c2c_commission_value: 0.1,
+  withdrawals_commission_type: "percent",
+  withdrawals_commission_value: 1
 )
+advanced.build_month_limit(
+  withdrawals_to_commission: 500_000,
+  c2c_external_to_commission: 1_000_000,
+  c2c_internal_to_commission: 5_000_000,
+  sbp_to_commission: 2_000_000
+).save
 # =====================
 
 # === BANK ===
@@ -41,9 +80,12 @@ bank_user = User.find_or_create_by!(
 )
 
 Account.currencies.each_key do |currency|
-  next if bank_user.accounts.where(currency: currency).exists?
+  account = bank_user.accounts.find_by(currency: currency)
 
-  Api::V1::Accounts::Create.call(user: bank_user, currency: currency)
+  next account.update(service_rate: bank_service_rate) if account.present?
+
+  account = Api::V1::Accounts::Create.call(user: bank_user, currency: currency)
+  account.update(service_rate: bank_service_rate)
 end
 # ============
 

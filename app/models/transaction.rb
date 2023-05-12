@@ -1,5 +1,5 @@
 class Transaction < ApplicationRecord
-  OPERATION_TYPES = %w[transfer external_payment commission monthly_payment withdrawals replenishment].freeze
+  OPERATION_TYPES = %w[transfer payment rate_payment withdrawals replenishment].freeze
   STATUSES = %w[unconfirmed confirmed cancelled failed].freeze
 
   enum operation_type: OPERATION_TYPES.zip(OPERATION_TYPES).to_h, _prefix: true
@@ -19,5 +19,9 @@ class Transaction < ApplicationRecord
 
   def confirm!
     update!(status: :confirmed, processed_at: DateTime.now.in_time_zone)
+  end
+
+  def external?
+    operation_type_transfer? && external_account_to_id.present? && external_account_to_type.present?
   end
 end

@@ -1,4 +1,4 @@
 FactoryBot.define do
-  factory :transaction do
+  factory :month_limit do
   end
 end

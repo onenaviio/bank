@@ -7,6 +7,9 @@ class CreateServiceRates < ActiveRecord::Migration[6.1]
       t.string :c2c_commission_type, null: false
       t.float :c2c_commission_value, null: false, default: 0
 
+      t.string :withdrawals_commission_type, null: false
+      t.float :withdrawals_commission_value, null: false, default: 0
+
       t.timestamps
     end
   end

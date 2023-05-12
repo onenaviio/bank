@@ -3,6 +3,8 @@
 :queues:
   - default
   - transactions
+  - suspicious
+  - payments
 staging:
   :concurrency: 20
 production:

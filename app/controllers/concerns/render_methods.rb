@@ -5,7 +5,7 @@ module RenderMethods
     render json: { data: data }, status: status
   end
 
-  def render_collections(resources, status: 200)
+  def render_collection(resources, status: 200)
     render_json(resources, status: status)
   end
 end

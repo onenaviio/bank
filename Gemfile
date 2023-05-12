@@ -10,11 +10,11 @@ gem "pg"
 gem "pry-rails"
 gem "puma", "~> 5.0"
 gem "rails", "~> 6.1.7", ">= 6.1.7.2"
+gem "redis"
 gem "rubocop-faker", require: false
 gem "rubocop-performance", require: false
 gem "rubocop-rails", require: false
 gem "rubocop-rspec", require: false
-gem "redis"
 gem "sidekiq"
 
 gem "rack-cors"

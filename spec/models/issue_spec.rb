@@ -1,5 +1,5 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe Issue, type: :model do
+RSpec.describe Issue do
   pending "add some examples to (or delete) #{__FILE__}"
 end

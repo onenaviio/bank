@@ -86,6 +86,6 @@ class Transactions::Creator < AppService
   end
 
   def suspicious_operation?
-    payloads.payload >= 1_000_000.0
+    payloads.payload >= 1_000_000.0 && operation_type == "transfer"
   end
 end

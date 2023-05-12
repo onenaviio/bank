@@ -1,6 +1,6 @@
 class Api::V1::AccountsController < ApplicationController
   def index
-    render_collections(accounts)
+    render_collection(accounts)
   end
 
   def show

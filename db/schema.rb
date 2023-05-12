@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_01_115234) do
+ActiveRecord::Schema.define(version: 2023_05_11_130410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "number", null: false
     t.integer "currency", null: false
     t.float "balance", default: 0.0, null: false
@@ -41,8 +41,28 @@ ActiveRecord::Schema.define(version: 2023_05_01_115234) do
   create_table "issues", force: :cascade do |t|
     t.string "message", null: false
     t.datetime "occured_at", null: false
+    t.boolean "resolved", default: false
+    t.text "code"
     t.jsonb "context", default: {}
     t.jsonb "backtrace", default: []
+  end
+
+  create_table "month_limits", force: :cascade do |t|
+    t.bigint "service_rate_id", null: false
+    t.float "withdrawals_to_commission", null: false
+    t.float "c2c_external_to_commission", null: false
+    t.float "c2c_internal_to_commission", null: false
+    t.float "sbp_to_commission", null: false
+    t.index ["service_rate_id"], name: "index_month_limits_on_service_rate_id"
+  end
+
+  create_table "reached_limits", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.float "withdrawals_to_commission", default: 0.0, null: false
+    t.float "c2c_external_to_commission", default: 0.0, null: false
+    t.float "c2c_internal_to_commission", default: 0.0, null: false
+    t.float "sbp_to_commission", default: 0.0, null: false
+    t.index ["account_id"], name: "index_reached_limits_on_account_id"
   end
 
   create_table "service_rates", force: :cascade do |t|
@@ -50,6 +70,8 @@ ActiveRecord::Schema.define(version: 2023_05_01_115234) do
     t.float "service_per_month", default: 0.0, null: false
     t.string "c2c_commission_type", null: false
     t.float "c2c_commission_value", default: 0.0, null: false
+    t.string "withdrawals_commission_type", null: false
+    t.float "withdrawals_commission_value", default: 0.0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -92,6 +114,8 @@ ActiveRecord::Schema.define(version: 2023_05_01_115234) do
   add_foreign_key "accounts", "service_rates"
   add_foreign_key "accounts", "users", on_delete: :cascade
   add_foreign_key "cards", "accounts"
+  add_foreign_key "month_limits", "service_rates"
+  add_foreign_key "reached_limits", "accounts"
   add_foreign_key "transactions", "accounts", column: "account_from_id"
   add_foreign_key "transactions", "accounts", column: "account_to_id"
   add_foreign_key "transactions", "cards", column: "card_from_id"
